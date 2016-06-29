@@ -10,30 +10,9 @@ import org.scalacheck.Arbitrary.arbitrary
 
 import JodaGen._
 
-object ScalacheckJodaHelpers {
+object JodaGenTest extends Properties("Joda Generators") {
 
-  val genYearsPeriod: Gen[Years] = Gen.choose(-292275054, 292278993).map(Years.ZERO.plus(_))
-  val genMonthsPeriod: Gen[Months] = Gen.choose(-292275054, 292278993).map(Months.ZERO.plus(_))
-  val genWeeksPeriod: Gen[Weeks] = arbitrary[Int].map(Weeks.ZERO.plus(_))
-  val genDaysPeriod: Gen[Days] = arbitrary[Int].map(Days.ZERO.plus(_))
-  val genHoursPeriod: Gen[Hours] = arbitrary[Int].map(Hours.ZERO.plus(_))
-  val genMinutesPeriod: Gen[Minutes] = arbitrary[Int].map(Minutes.ZERO.plus(_))
-  val genSecondsPeriod: Gen[Seconds] = arbitrary[Int].map(Seconds.ZERO.plus(_))
-
-  val genPeriod: Gen[ReadablePeriod] = Gen.oneOf(
-    genYearsPeriod,
-    genMonthsPeriod,
-    genWeeksPeriod,
-    genDaysPeriod,
-    genHoursPeriod,
-    genMinutesPeriod,
-    genSecondsPeriod
-  )
-}
-
-object JodaGenTest extends Properties("DateTime") {
-
-  property("Should only be generated within a specified period") = forAll(ScalacheckJodaHelpers.genPeriod) { p =>
+  property("genDateTimeForRange should only be generated within a specified period") = forAll(genPeriod) { p =>
 
     val now = new DateTime()
 
