@@ -3,15 +3,12 @@ package com.noelmarkham.scalacheck.joda
 import org.joda.time._
 import org.joda.time.format.PeriodFormat
 
-// todo remove wildcards
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalacheck.Gen._
 import org.scalacheck.Arbitrary.arbitrary
 
-//import TimeUnits._
-
-import DateTimeRange._
+import JodaGen._
 
 object ScalacheckJodaHelpers {
 
@@ -34,13 +31,13 @@ object ScalacheckJodaHelpers {
   )
 }
 
-object DateTimeRangeTest extends Properties("DateTime") {
+object JodaGenTest extends Properties("DateTime") {
 
   property("Should only be generated within a specified period") = forAll(ScalacheckJodaHelpers.genPeriod) { p =>
 
     val now = new DateTime()
 
-    forAll(genDateTimeRange(now, p)) { generated =>
+    forAll(genDateTimeForRange(now, p)) { generated =>
 
       val maxBoundary = now.plus(p)
       val minBoundary = now.minus(p)
