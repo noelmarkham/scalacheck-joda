@@ -3,6 +3,7 @@ package com.noelmarkham.scalacheck.joda
 import org.joda.time._
 
 import org.scalacheck.Gen
+import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
 object JodaGen {
@@ -32,3 +33,60 @@ object JodaGen {
   }
 }
 
+object Granularities {
+
+  sealed trait Granularity { def normalise(dt: DateTime): DateTime }
+
+  case object Millis extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt
+    }
+  }
+
+  case object Seconds extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0)
+    }
+  }
+  case object Minutes extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0).withSecondOfMinute(0)
+    }
+  }
+
+  case object Hours extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0)
+    }
+  }
+
+  case object Days extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0)
+    }
+  }
+  case object Months extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0).withDayOfMonth(1)
+    }
+  }
+
+  case object Years extends Granularity {
+    def normalise(dt: DateTime): DateTime = {
+      dt.withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0).withHourOfDay(0).withDayOfYear(1)
+    }
+  }
+
+}
+
+
+object JodaArb {
+
+  import Granularities._
+  implicit def arbDateTime(implicit g: Granularity): Arbitrary[DateTime] = Arbitrary {
+    arbitrary[Long].map { l =>
+      g.normalise(new DateTime(l))
+    }
+  }
+
+}

@@ -38,4 +38,5 @@ object JodaGenTest extends Properties("Joda Generators") {
       resultText |: check
     }
   }
+
 }
