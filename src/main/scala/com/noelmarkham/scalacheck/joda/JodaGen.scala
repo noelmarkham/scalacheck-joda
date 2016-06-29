@@ -26,10 +26,10 @@ object JodaGen {
     genSecondsPeriod
   )
 
-  def genDateTimeForRange(dt: DateTime, p: ReadablePeriod): Gen[DateTime] = {
+  def genDateTimeForRange(dt: DateTime, p: ReadablePeriod)(implicit g: Granularities.Granularity): Gen[DateTime] = {
     val diffMillis = Math.abs(dt.plus(p).getMillis() - dt.getMillis())
 
-    Gen.choose(-diffMillis, diffMillis).map(dt.plus(_))
+    Gen.choose(-diffMillis, diffMillis).map(millis => g.normalise(dt.plus(millis)))
   }
 }
 
